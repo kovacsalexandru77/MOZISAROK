@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<title>Scroll érzékelő sidebar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+  body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #000;
+  color: white;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  border: 4px solid cyan;
+  box-sizing: border-box; /* hogy ne nőjön meg a méret */
+}
+
+  .vertical-text {
+  position: fixed;
+  left: 60px;  /* ennyi hely a sidebar */
+  top: 0;
+  color: cyan;
+  font-size: 22px;
+  padding: 12px;
+  z-index: 1000;
+  white-space: nowrap;
+  width: auto; /* ne legyen 100%, hogy ne foglalja le az egész szélességet */
+  text-align: left;
+}
+
+  .black-sidebar {
+  position: fixed;
+  left: 0;
+  bottom: 0;          /* lent marad */
+  width: 0;
+  height: 240px;      /* vagy amekkora kell */
+  background-color: #000;  /* sima fekete, átlátszatlanság nélkül */
+  transition: width 0.1s ease, left 0.4s ease;
+  z-index: 11500;
+  overflow: hidden;
+}
+
+  .black-sidebar.active {
+    width: 110vw;   /* 10% szélesebb mint a képernyő */
+    left: -5vw;     /* 5% balra tolva, így középre kerül a kilógás */
+  }
+
+  iframe {
+    position: relative;
+    width: 100%;
+    height: 1500px;
+    border: none;
+    z-index: 0;
+  }
+
+  .clock {
+    position: fixed;
+    top: 4px;
+    right: 17px;
+    font-size: 16px;
+    color: cyan;
+    background: none;
+    padding: 7px 16px;
+    border-radius: 6px;
+    z-index: 10000;
+    font-weight: bold;
+  }
+  /* Sidebar, clock és többi stílus változatlanul maradt, csak a színek zöld neonra */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 60px;
+      background-color: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 8px;
+      z-index: 1000;
+    }
+    .sidebar a {
+      color: #00ff00;
+      font-size: 24px;
+      margin: 8px 0;
+      transition: transform 0.3s, color 0.3s, text-shadow 0.3s;
+      text-decoration:none;
+    }
+    .sidebar a:hover {
+      color: #00ff00;
+      transform: scale(1.3);
+      text-shadow: 0 0 12px #00ff00;
+    }
+</style>
+</head>
+<body>
+
+  <div class="clock" id="clock"></div>
+  <div class="vertical-text">Mozi Sᴀɴᴅᴜ▶</div>
+  <div class="sidebar">
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/')" title="Új filmek"><i class="bi bi-film"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/tv/10759?uploaded=true')" title="Sorozatok"><i class="bi bi-collection-play"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/28?uploaded=true')" title="Akció"><i class="bi bi-lightning-fill"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/16?uploaded=true')" title="Animációs"><i class="bi bi-palette-fill"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')" title="Családi"><i class="bi bi-house-heart"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/18?uploaded=true')" title="Dráma"><i class="bi bi-theater-masks"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/27?uploaded=true')" title="Horror"><i class="bi bi-emoji-dizzy"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')" title="Kaland"><i class="bi bi-compass"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/80?uploaded=true')" title="Bunugyi"><i class="bi bi-shield-lock"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/53?uploaded=true')" title="Thriller"><i class="bi bi-lightning"></i></a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/35?uploaded=true')" title="Vígjáték"><i class="bi bi-emoji-smile"></i></a>
+</div>
+
+  <div class="black-sidebar" id="blackSidebar"></div>
+
+  <iframe src="https://mozisarok.hu" frameborder="0" allowfullscreen></iframe>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('clock').textContent = `${hours}:${minutes}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY || window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+      document.getElementById('blackSidebar').classList.add('active');
+    } else {
+      document.getElementById('blackSidebar').classList.remove('active');
+    }
+  });
+</script>
+<script>
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('clock').textContent = `${hours}:${minutes}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY || window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+      document.getElementById('blackSidebar').classList.add('active');
+    } else {
+      document.getElementById('blackSidebar').classList.remove('active');
+    }
+  });
+
+  // <-- ide tedd be ezt:
+  function changeCategory(url) {
+    const iframe = document.querySelector('iframe');
+    iframe.src = url;
+  }
+</script>
+
+</body>
+</html>
