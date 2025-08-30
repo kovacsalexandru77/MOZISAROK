@@ -1,110 +1,230 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mozisandu</title>
 <style>
 :root{
   --bg:#0b0f14;
   --panel:#0f1621;
   --panel-2:#121a26;
-  --muted:#7c8aa1;
   --text:#e6f1ff;
   --accent:#00e5ff;
-  --accent-2:#25f3ff;
-  --shadow:0 10px 30px rgba(0,0,0,.35);
-  --radius:18px;
 }
-*{box-sizing:border-box} 
-html,body{height:100%}
-body{
-  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
-  background: radial-gradient(1200px 600px at 80% -10%, rgba(0,229,255,.10), rgba(0,0,0,0)) , var(--bg);
-  color:var(--text); overflow-x:hidden;
-}
-a{color:var(--accent)}
-.app{display:grid; grid-template-columns: 78px 1fr; min-height:100dvh;}
-
-/* Sidebar */
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);}
+.app{display:grid;grid-template-columns:78px 1fr;height:100vh;}
 .sidebar{
-  position:sticky; top:0; height:100dvh;
-  background:linear-gradient(180deg,var(--panel), var(--panel-2));
-  border-right:1px solid rgba(255,255,255,.05);
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
   padding:10px 8px; display:flex; flex-direction:column; gap:8px;
-  box-shadow: var(--shadow); z-index:3;
 }
 .brand{
-  display:grid; place-items:center;
-  height:54px; border-radius:14px;
+  display:grid; place-items:center; height:54px; border-radius:14px;
   background:linear-gradient(135deg, rgba(0,229,255,.08), rgba(255,255,255,.02));
-  outline:1px solid rgba(255,255,255,.06);
-  font-weight:800; letter-spacing:.5px; font-size:12px;
-  text-transform:uppercase; color:var(--accent);
-  text-shadow:0 0 18px rgba(37,243,255,.6);
+  color:var(--accent); font-weight:800; font-size:12px; text-transform:uppercase;
 }
 .cat{
-  display:grid; place-items:center; height:56px; border-radius:16px; cursor:pointer;
-  transition:transform .12s ease, background .2s ease, outline-color .2s ease;
-  background:rgba(255,255,255,.03); outline:1px solid rgba(255,255,255,.06);
+  display:grid; place-items:center; height:56px; border-radius:16px;
+  cursor:pointer; background:rgba(255,255,255,.03); outline:1px solid rgba(255,255,255,.06);
+  transition: transform .12s ease, background .2s ease;
 }
-.cat:hover{ transform:translateY(-2px); background:rgba(255,255,255,.06) }
-.cat svg{ width:26px; height:26px; opacity:.92; filter:drop-shadow(0 0 8px rgba(37,243,255,.35)) }
-.spacer{ flex:1 }
-.foot-note{ font-size:10px; color:var(--muted); text-align:center; opacity:.7 }
+.cat:hover{
+  background:rgba(255,255,255,.06);
+  transform: scale(1.1);
+  animation: neonPulse 1.5s infinite ease-in-out;
+}
+.cat svg{width:26px;height:26px;stroke:cyan;transition: transform 0.2s ease;}
+@keyframes neonPulse{
+  0%{ stroke:cyan; filter:drop-shadow(0 0 6px cyan);}
+  25%{ stroke:lime; filter:drop-shadow(0 0 12px lime);}
+  50%{ stroke:magenta; filter:drop-shadow(0 0 18px magenta);}
+  75%{ stroke:yellow; filter:drop-shadow(0 0 12px yellow);}
+  100%{ stroke:cyan; filter:drop-shadow(0 0 6px cyan);}
+}
+.spacer{flex:1;}
+.foot-note{font-size:10px;color:#7c8aa1;text-align:center;opacity:.7;}
+iframe{width:100%;height:100%;border:none;}
 
-/* Iframe */
-iframe{width:100%; height:1500px; border:none;}
-.clock {
-    position: fixed;
-    top: 4px;
-    right: 17px;
-    font-size: 16px;
-    color: cyan;
-    background: none;
-    padding: 7px 16px;
-    border-radius: 6px;
-    z-index: 10000;
-    font-weight: bold;
+/* Topbar + hamburger */
+.topbar{
+  position:fixed;
+  top:0;
+  left:78px;   /* sidebar szélessége */
+  right:0;
+  height:48px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 10px;
+  z-index:2000;
+  background:rgba(0,0,0,0.4); /* áttetsző háttér */
+  backdrop-filter: blur(6px);
 }
-.black-sidebar {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 240px;
-  background-color: #0b0f14; /* háttérhez igazított sötét árnyalat */
-  transition: width 0.1s ease, left 0.4s ease;
-  z-index: 11500;
-  overflow: hidden;
+.hamburger{
+  width:30px; height:24px; display:flex; flex-direction:column; justify-content:space-between;
+  cursor:pointer;
 }
-.black-sidebar.active {
-  width: 110vw;
-  left: -5vw;
+.hamburger span{display:block; height:4px; background:cyan; border-radius:2px; transition:0.3s;}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.active span:nth-child(2){opacity:0;}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.dropdown{
+  position:fixed;
+  top:48px;
+  right:10px;
+  background:rgba(0,0,0,0.6); /* áttetsző */
+  backdrop-filter: blur(6px);
+  color:cyan;
+  display:none; flex-direction:column; z-index:2000; padding:10px; border-radius:8px;
 }
-.sidebar .cat svg {
-  stroke: cyan;
-  animation: pulseNeon 2s infinite ease-in-out;
-}
+.dropdown a{color:cyan; text-decoration:none; padding:6px 12px; border-radius:6px; margin:2px 0;}
+.dropdown a:hover{background:rgba(0,229,255,0.15);}
 
-@keyframes pulseNeon {
-  0%   { stroke: cyan;    filter: drop-shadow(0 0 5px cyan); }
-  25%  { stroke: lime;    filter: drop-shadow(0 0 10px lime); }
-  50%  { stroke: magenta; filter: drop-shadow(0 0 15px magenta); }
-  75%  { stroke: yellow;  filter: drop-shadow(0 0 10px yellow); }
-  100% { stroke: cyan;    filter: drop-shadow(0 0 5px cyan); }
+/* Tooltip */
+#tooltip{
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:rgba(0,0,0,0.85); color:cyan; padding:6px 12px; border-radius:12px;
+  font-size:13px; opacity:0; transition:0.15s; pointer-events:none; z-index:9999;
 }
 </style>
 </head>
 <body>
-<div class="clock" id="clock"></div>
+
+<!-- Felső sáv hamburgerrel -->
+<div class="topbar">
+  <div id="hamburger" class="hamburger"><span></span><span></span><span></span></div>
+  <div style="color:cyan; font-weight:bold;">Kategóriák</div>
+</div>
+
+<div class="dropdown" id="dropdownMenu">
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/')">Új filmek</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/tv/10759?uploaded=true')">Sorozatok</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/28?uploaded=true')">Akció</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/35?uploaded=true')">Vígjáték</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/18?uploaded=true')">Dráma</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/27?uploaded=true')">Horror</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/878?uploaded=true')">Sci-Fi</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/16?uploaded=true')">Animációs</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')">Családi</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/53?uploaded=true')">Thriller</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')">Kaland</a>
+  <a href="#" onclick="changeCategory('https://mozisarok.hu/genre/movie/80?uploaded=true')">Bűnügyi</a>
+</div>
+
 <div class="app">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="brand">Mozi▶</div>
 
-    <!-- Kategóriák -->
-    <div class="cat" onclick="changeCategory('https://mozisarok.hu/')" title="Új filmek">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <!-- Kategóriák ikonokkal -->
+    <div class="cat" title="Új filmek" onclick="changeCategory('https://mozisarok.hu/')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <rect x="3" y="3" width="7" height="7" rx="2"/>
+        <rect x="14" y="3" width="7" height="7" rx="2"/>
+        <rect x="3" y="14" width="7" height="7" rx="2"/>
+        <rect x="14" y="14" width="7" height="7" rx="2"/>
+      </svg>
+    </div>
+    <div class="cat" title="Sorozatok" onclick="changeCategory('https://mozisarok.hu/genre/tv/10759?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <rect x="3" y="4" width="18" height="14" rx="3"/><path d="M7 20h10"/>
+      </svg>
+    </div>
+    <div class="cat" title="Akció" onclick="changeCategory('https://mozisarok.hu/genre/movie/28?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M3 12h5l3 7 4-14 3 7h4" />
+      </svg>
+    </div>
+    <div class="cat" title="Vígjáték" onclick="changeCategory('https://mozisarok.hu/genre/movie/35?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M8 14s2 2 4 2 4-2 4-2"/>
+        <path d="M9 10h.01M15 10h.01"/>
+      </svg>
+    </div>
+    <div class="cat" title="Dráma" onclick="changeCategory('https://mozisarok.hu/genre/movie/18?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M3 5h18v7a9 9 0 0 1-18 0z"/>
+        <path d="M8 10h.01M16 10h.01"/>
+      </svg>
+    </div>
+    <div class="cat" title="Horror" onclick="changeCategory('https://mozisarok.hu/genre/movie/27?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M12 2v4M5 22l2-6 5-2 5 2 2 6M5 10h14l-2 4H7z"/>
+      </svg>
+    </div>
+    <div class="cat" title="Sci-Fi" onclick="changeCategory('https://mozisarok.hu/genre/movie/878?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M2 12h7m6 0h7M12 2v7m0 6v7"/>
+      </svg>
+    </div>
+    <div class="cat" title="Animációs" onclick="changeCategory('https://mozisarok.hu/genre/movie/16?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M4 4h16v16H4z"/>
+      </svg>
+    </div>
+    <div class="cat" title="Családi" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M3 12h18M12 3v18"/>
+      </svg>
+    </div>
+    <div class="cat" title="Thriller" onclick="changeCategory('https://mozisarok.hu/genre/movie/53?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M12 2l7 20H5z"/>
+      </svg>
+    </div>
+    <div class="cat" title="Kaland" onclick="changeCategory('https://mozisarok.hu/genre/movie/12?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M2 12l10-10 10 10-10 10z"/>
+      </svg>
+    </div>
+    <div class="cat" title="Bűnügyi" onclick="changeCategory('https://mozisarok.hu/genre/movie/80?uploaded=true')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+        <path d="M12 2l5 5-5 5-5-5z"/>
+      </svg>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="foot-note">©MoziSandu</div>
+  </aside>
+
+  <!-- Tartalom -->
+  <div style="background:var(--panel-2);">
+    <iframe src="https://mozisarok.hu/"></iframe>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const hamburger = document.getElementById("hamburger");
+const dropdown = document.getElementById("dropdownMenu");
+
+hamburger.addEventListener("click", ()=>{
+  hamburger.classList.toggle("active");
+  dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+});
+
+function changeCategory(url){
+  document.querySelector('iframe').src = url;
+}
+
+// Tooltip középre
+const tooltip = document.getElementById("tooltip");
+document.querySelectorAll(".cat").forEach(cat=>{
+  cat.addEventListener("mouseenter", ()=>{
+    tooltip.textContent = cat.getAttribute("title");
+    tooltip.style.opacity = 1;
+  });
+  cat.addEventListener("mouseleave", ()=>{
+    tooltip.style.opacity = 0;
+  });
+});
+</script>
+
+</body>
+  </html>      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
         <rect x="3" y="3" width="7" height="7" rx="2"/>
         <rect x="14" y="3" width="7" height="7" rx="2"/>
         <rect x="3" y="14" width="7" height="7" rx="2"/>
